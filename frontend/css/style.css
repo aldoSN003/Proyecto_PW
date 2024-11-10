@@ -1,0 +1,27 @@
+.c-item {
+  height: 93vh;
+}
+
+.c-img {
+  width: 100%; /* Ensures image takes full width */
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.3);
+}
+
+/* Navbar link hover color */
+.navbar .nav-link:hover,
+.navbar .nav-link:hover i {
+  color: #ff8000;
+}
+
+/* Button base and hover color */
+.btn-primary {
+  background-color: #ff8000; /* Base color */
+  border-color: #ff8000;
+}
+
+.btn-primary:hover {
+  background-color: #cc6600; /* Darker shade on hover */
+  border-color: #cc6600;
+}
