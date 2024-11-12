@@ -1,5 +1,51 @@
 <?php
 require_once 'connection.php';
+session_start();
+/*
+if (isset($_SESSION['user'])) {
+  header("location:welcome.php");
+}*/
+
+if (isset($_REQUEST['login_btn'])) {
+
+
+  $email = filter_var($_REQUEST['iemail'], FILTER_SANITIZE_EMAIL);
+  $password = strip_tags($_REQUEST['ipassword']);
+  // Initialize error messages as an associative array
+  $error_msg = [];
+  if (empty($email)) {
+    $error_msg['email'] = 'Must enter email';
+  }
+
+  if (empty($password)) {
+    $error_msg['password'] = 'Must enter password';
+  } else {
+    try {
+      $select_stmt = $db->prepare("SELECT * FROM users WHERE email = :email LIMIT 1");
+      $select_stmt->execute([
+        ':email' => $email,
+      ]);
+      $row = $select_stmt->fetch(PDO::FETCH_ASSOC);
+
+      if ($select_stmt->rowCount() > 0) {
+        if (password_verify($password, $row["password"])) {
+          $_SESSION["user"]["name"] = $row["first_name"];
+          $_SESSION["user"]["email"] = $row["email"];
+          $_SESSION["user"]["id"] = $row["user_id"];
+          header("location: welcome.php");
+        } else {
+          $error_msg['login'] = 'Wrong email or password'; // Added specific error for wrong credentials
+        }
+      } else {
+        $error_msg['login'] = 'Wrong email or password';
+      }
+    } catch (PDOException $e) {
+      echo $e->getMessage();
+    }
+  }
+}
+
+
 ?>
 
 
@@ -32,7 +78,7 @@ require_once 'connection.php';
       </div>
       <div class="col-md-6 col-lg-7 d-flex align-items-center">
         <div class="card-body p-4 p-lg-5 text-black w-100">
-          <form>
+          <form action="login.php" method="post">
             <div class="d-flex align-items-center mb-3 pb-1">
               <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219"></i>
               <span class="h1 fw-bold mb-0">INGEMANAGER</span>
@@ -44,16 +90,34 @@ require_once 'connection.php';
 
 
 
+
             <div class="form-outline mb-4">
+
               <input
+                placeholder="jane@doe.com"
                 type="email"
+                name="iemail"
                 id="form2Example17"
-                class="form-control form-control-lg" />
+                class="form-control form-control-lg form-check" />
+
               <label class="form-label" for="form2Example17">Correo electrónico</label>
+              <?php
+              if (isset($error_msg['email'])) {
+                echo " <label class='form-label small text-danger'>" . $error_msg['email'] . "</label>";
+              }
+              ?>
+
             </div>
-            <div class="form-outline mb-4 position-relative">
+            <?php
+            if (isset($error_msg['password'])) {
+              echo "<p class='small text-danger'>" . $error_msg['password'] . "</p>";
+            }
+            ?>
+            <div class="form-outline mb-4 ">
               <input
+
                 type="password"
+                name="ipassword"
                 id="form2Example27"
                 class="form-control form-control-lg" />
               <label class="form-label" for="form2Example27">Contraseña</label>
@@ -66,7 +130,7 @@ require_once 'connection.php';
               </button>
             </div>
             <div class="pt-1 mb-4">
-              <button class="btn btn-dark btn-lg btn-block" type="button">
+              <button class="btn btn-primary" type="submit" name="login_btn">
                 Login
               </button>
             </div>

@@ -5,55 +5,99 @@ $error_msg = [];
 
 # CLICKING "register_btn"
 if (isset($_REQUEST['register_btn'])) {
-  $firstName = $_REQUEST['firstName'] ?? '';
-  $lastName = $_REQUEST['lastName'] ?? '';
-  $birthdayDate = $_REQUEST['birthdayDate'] ?? '';
-  $gender = $_REQUEST['gender'] ?? '';
-  $emailAddress = filter_var($_REQUEST['emailAddress'], FILTER_SANITIZE_EMAIL);
-  $phoneNumber = $_REQUEST['phoneNumber'] ?? '';
-  $password = strip_tags($_REQUEST['password'] ?? '');
 
+  echo '<pre>';
+  print_r($_REQUEST);
+  echo '</pre>';
 
-  // Validate fields and store error messages
+  $firstName = htmlspecialchars(strip_tags(trim($_REQUEST['ifirstName'] ?? '')));
+  $lastName = htmlspecialchars(strip_tags(trim($_REQUEST['ilastName'] ?? '')));
+  $birthdayDate = htmlspecialchars(strip_tags(trim($_REQUEST['ibirthdayDate'] ?? '')));
+  $gender = htmlspecialchars(strip_tags(trim($_REQUEST['igender'] ?? '')));
+
+  // Validate and sanitize specific fields
+  $emailAddress = filter_var(trim($_REQUEST['iemailAddress'] ?? ''), FILTER_SANITIZE_EMAIL);
+  $phoneNumber = htmlspecialchars(strip_tags(trim($_REQUEST['iphoneNumber'] ?? '')));
+  $password = strip_tags(trim($_REQUEST['ipassword'] ?? ''));
+  $confirmPassword = strip_tags(trim($_REQUEST['iconfirmPassword'] ?? ''));
+
+  // Initialize an array to store error messages
+  $error_msg = [];
+
+  // Validate each field for emptiness
   if (empty($firstName)) {
     $error_msg['firstName'][] = "First name is required";
   }
-
   if (empty($lastName)) {
     $error_msg['lastName'][] = "Last name is required";
   }
+  if (empty($birthdayDate)) {
+    $error_msg['birthdayDate'][] = "Birthday date is required";
+  }
+  if (empty($gender)) {
+    $error_msg['gender'][] = "Gender is required";
+  }
 
   if (empty($emailAddress)) {
-    $error_msg['emailAddress'][] = "Email is required";
+    $error_msg['emailAddress'][] = "Email address is required";
   } elseif (!filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
     $error_msg['emailAddress'][] = "Invalid email format";
   }
-
   if (empty($phoneNumber)) {
     $error_msg['phoneNumber'][] = "Phone number is required";
+  } elseif (!preg_match('/^[0-9]{10}$/', $phoneNumber)) { // Adjust regex based on phone format
+    $error_msg['phoneNumber'][] = "Phone number must be a valid 10-digit number";
   }
 
   if (empty($password)) {
     $error_msg['password'][] = "Password is required";
+  } elseif (strlen($password) < 6) {
+    $error_msg['password'][] = "Password must be at least 6 characters long";
+  } elseif ($password !== $confirmPassword) {
+    $error_msg['confirmPassword'][] = "Passwords do not match";
   }
 
-  try {
+  // Check for errors before insertion
+  if (empty($error_msg)) {
+    try {
+      // 1. Prepare SQL query to check if the email already exists in the database
+      $select_stmt = $db->prepare("SELECT email FROM users WHERE email = :email");
+      $select_stmt->execute([':email' => $emailAddress]);
 
-    if (empty($error_msg)) {
-      // Prepare SQL query to check if the email already exists in the database
-      $select_stmt = $db->prepare("SELECT name, email FROM users WHERE email = :emailAddress");
-      $select_stmt->execute([':emailAddress' => $emailAddress]);
-
-      // Fetch result to check if email is found
+      // 2. Fetch result to check if email is found
       $row = $select_stmt->fetch(PDO::FETCH_ASSOC);
 
-      // Check if the email already exists
+      // 3. Check if the email already exists
       if ($row && $row['email'] === $emailAddress) {
-        $error_msg[1][] = "Email address already exists";
+        $error_msg['db'][] = "Email address already exists";
+      } else {
+        // 4. If no errors, proceed to insert the new user
+        // Hash the password before storing
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+        // Prepare SQL query to insert new user
+        $insert_stmt = $db->prepare(
+          "INSERT INTO users (first_name, last_name, birth_date, gender, email, phone, password) 
+           VALUES (:first_name, :last_name, :birth_date, :gender, :email, :phone, :password)"
+        );
+        $insert_stmt->execute([
+          ':first_name' => $firstName,
+          ':last_name' => $lastName,
+          ':birth_date' => $birthdayDate,
+          ':gender' => $gender,
+          ':email' => $emailAddress,
+          ':phone' => $phoneNumber,
+          ':password' => $hashedPassword
+        ]);
+
+        // Success: Redirect or show a success message
+        header("Location: login.php"); // Redirect to a success page
+        exit();
       }
+    } catch (PDOException $e) {
+      // Display error if any issues with SQL query execution
+      echo "Database or server error: " . $e->getMessage();
     }
-  } catch (PDOException $e) {
-    echo "Database error: " . $e->getMessage();
   }
 }
 ?>
@@ -65,12 +109,8 @@ if (isset($_REQUEST['register_btn'])) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register</title>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-    rel="stylesheet" />
-  <link
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
   <style>
     main {
       min-height: 100vh;
@@ -79,14 +119,17 @@ if (isset($_REQUEST['register_btn'])) {
 </head>
 
 <body>
+  <?php
+  if (isset($error_msg['db'])) {
+    foreach ($error_msg['db'] as $email_errors) {
+      echo "<p class='small text-danger'>" . $email_errors . "</p>";
+    }
+  }
+  ?>
   <main class="d-flex justify-content-center align-items-start">
     <div class="row g-0 w-100">
       <div class="col-md-6 col-lg-5 d-none d-md-block">
-        <img
-          src="../img/user.jpg"
-          alt="register form"
-          class="img-fluid h-100"
-          style="object-fit: cover; border-radius: 1rem 0 0 1rem" />
+        <img src="../img/user.jpg" alt="register form" class="img-fluid h-100" style="object-fit: cover; border-radius: 1rem 0 0 1rem" />
       </div>
       <div class="col-md-6 col-lg-7 d-flex align-items-center">
         <div class="card-body p-4 p-lg-5 text-black w-100">
@@ -106,20 +149,15 @@ if (isset($_REQUEST['register_btn'])) {
                   }
                 } ?>
                 <div class="form-outline">
-                  <input type="text" id="firstName" name="firstName" class="form-control form-control-lg" required />
+                  <input type="text" id="firstName" name="ifirstName" class="form-control form-control-lg" required />
                   <label class="form-label" for="firstName">Nombre(s)</label>
                 </div>
               </div>
 
               <!-- Last Name Field -->
               <div class="col-md-6 mb-4">
-                <?php if (isset($error_msg['lastName'])) {
-                  foreach ($error_msg['lastName'] as $error) {
-                    echo "<p class='small text-danger'>" . $error . "</p>";
-                  }
-                } ?>
                 <div class="form-outline">
-                  <input type="text" id="lastName" name="lastName" class="form-control form-control-lg" required />
+                  <input type="text" id="lastName" name="ilastName" class="form-control form-control-lg" required />
                   <label class="form-label" for="lastName">Apellido(s)</label>
                 </div>
               </div>
@@ -129,7 +167,7 @@ if (isset($_REQUEST['register_btn'])) {
               <!-- Birthdate Field -->
               <div class="col-md-6 mb-4">
                 <div class="form-outline">
-                  <input type="date" class="form-control form-control-lg" id="birthdayDate" name="birthdayDate" required />
+                  <input type="date" class="form-control form-control-lg" id="birthdayDate" name="ibirthdayDate" required />
                   <label for="birthdayDate" class="form-label">Fecha de nacimiento</label>
                 </div>
               </div>
@@ -138,15 +176,15 @@ if (isset($_REQUEST['register_btn'])) {
               <div class="col-md-6 mb-4">
                 <h6 class="mb-2 pb-1">Género:</h6>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="gender" id="femaleGender" value="female" checked />
+                  <input class="form-check-input" type="radio" name="igender" id="femaleGender" value="Mujer" checked />
                   <label class="form-check-label" for="femaleGender">Mujer</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="gender" id="maleGender" value="male" />
+                  <input class="form-check-input" type="radio" name="igender" id="maleGender" value="Hombre" />
                   <label class="form-check-label" for="maleGender">Hombre</label>
                 </div>
                 <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="radio" name="gender" id="otherGender" value="other" />
+                  <input class="form-check-input" type="radio" name="igender" id="otherGender" value="Otro" />
                   <label class="form-check-label" for="otherGender">Otro</label>
                 </div>
               </div>
@@ -156,27 +194,22 @@ if (isset($_REQUEST['register_btn'])) {
               <!-- Email Field -->
               <div class="col-md-6 mb-4 pb-2">
                 <?php
-                if (isset($error_msg[1])) {
-                  foreach ($error_msg[1] as $email_errors) {
+                if (isset($error_msg['emailAddress'])) {
+                  foreach ($error_msg['emailAddress'] as $email_errors) {
                     echo "<p class='small text-danger'>" . $email_errors . "</p>";
                   }
                 }
                 ?>
                 <div class="form-outline">
-                  <input type="email" id="emailAddress" name="emailAddress" class="form-control form-control-lg" required />
+                  <input type="email" id="emailAddress" name="iemailAddress" class="form-control form-control-lg" required />
                   <label class="form-label" for="emailAddress">Correo electrónico</label>
                 </div>
               </div>
 
-              <!-- Phone Number Field -->
+              <!-- Phone Field -->
               <div class="col-md-6 mb-4 pb-2">
-                <?php if (isset($error_msg['phoneNumber'])) {
-                  foreach ($error_msg['phoneNumber'] as $error) {
-                    echo "<p class='small text-danger'>" . $error . "</p>";
-                  }
-                } ?>
                 <div class="form-outline">
-                  <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control form-control-lg" required />
+                  <input type="text" id="phoneNumber" name="iphoneNumber" class="form-control form-control-lg" />
                   <label class="form-label" for="phoneNumber">Número de teléfono</label>
                 </div>
               </div>
@@ -184,48 +217,32 @@ if (isset($_REQUEST['register_btn'])) {
 
             <div class="row">
               <!-- Password Field -->
-              <div class="col-md-6 mb-4 pb-2">
-                <?php if (isset($error_msg['password'])) {
-                  foreach ($error_msg['password'] as $error) {
-                    echo "<p class='small text-danger'>" . $error . "</p>";
-                  }
-                } ?>
+              <div class="col-md-6 mb-4">
                 <div class="form-outline">
-                  <input type="password" id="password" name="password" class="form-control form-control-lg" required />
+                  <input type="password" id="password" name="ipassword" class="form-control form-control-lg" required />
                   <label class="form-label" for="password">Contraseña</label>
-                  <button type="button" class="btn" onclick="togglePasswordVisibility('password','toggleps')">
-                    <i class="fas fa-eye" id="toggleps"></i>
-                  </button>
                 </div>
               </div>
 
               <!-- Confirm Password Field -->
-              <div class="col-md-6 mb-4 pb-2">
+              <div class="col-md-6 mb-4">
                 <div class="form-outline">
-                  <input type="password" id="confirmPassword" name="confirmPassword" class="form-control form-control-lg" required />
+                  <input type="password" id="confirmPassword" name="iconfirmPassword" class="form-control form-control-lg" required />
                   <label class="form-label" for="confirmPassword">Confirmar contraseña</label>
-                  <button type="button" class="btn" onclick="togglePasswordVisibility('confirmPassword','togglecps')">
-                    <i class="fas fa-eye" id="togglecps"></i>
-                  </button>
                 </div>
               </div>
             </div>
 
-            <!-- Submit Button -->
-            <div class="mt-4 pt-2">
+            <div class="pt-1 mb-4">
               <button class="btn btn-dark btn-lg btn-block" type="submit" name="register_btn">Registrar</button>
             </div>
+            <p class="mb-5 pb-lg-2" style="color: #393f81">Ya tienes una cuenta? <a href="login.php" style="color: #393f81">Iniciar sesión</a></p>
           </form>
-
-          <!-- Login Link -->
-          <p class="mb-5 pb-lg-2" style="color: #393f81">
-            ¿Ya tienes cuenta?
-            <a href="login.php" style="color: #393f81">Inicia sesión aquí</a>
-          </p>
         </div>
       </div>
     </div>
   </main>
 
-  <script src="../js/utils.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2
+</body>
+
+</html>
