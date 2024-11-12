@@ -1,14 +1,10 @@
 <?php
 require_once 'connection.php';
-
+session_start(); // Start session to manage session variables
 $error_msg = [];
 
 # CLICKING "register_btn"
 if (isset($_REQUEST['register_btn'])) {
-
-  echo '<pre>';
-  print_r($_REQUEST);
-  echo '</pre>';
 
   $firstName = htmlspecialchars(strip_tags(trim($_REQUEST['ifirstName'] ?? '')));
   $lastName = htmlspecialchars(strip_tags(trim($_REQUEST['ilastName'] ?? '')));
@@ -26,35 +22,31 @@ if (isset($_REQUEST['register_btn'])) {
 
   // Validate each field for emptiness
   if (empty($firstName)) {
-    $error_msg['firstName'][] = "First name is required";
+    $error_msg['firstName'][] = "El nombre es obligatorio";
   }
   if (empty($lastName)) {
-    $error_msg['lastName'][] = "Last name is required";
+    $error_msg['lastName'][] = "El apellido es obligatorio";
   }
   if (empty($birthdayDate)) {
-    $error_msg['birthdayDate'][] = "Birthday date is required";
+    $error_msg['birthdayDate'][] = "La fecha de nacimiento es obligatoria";
   }
   if (empty($gender)) {
-    $error_msg['gender'][] = "Gender is required";
+    $error_msg['gender'][] = "El género es obligatorio";
   }
 
-  if (empty($emailAddress)) {
-    $error_msg['emailAddress'][] = "Email address is required";
-  } elseif (!filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
-    $error_msg['emailAddress'][] = "Invalid email format";
-  }
+
   if (empty($phoneNumber)) {
-    $error_msg['phoneNumber'][] = "Phone number is required";
-  } elseif (!preg_match('/^[0-9]{10}$/', $phoneNumber)) { // Adjust regex based on phone format
-    $error_msg['phoneNumber'][] = "Phone number must be a valid 10-digit number";
+    $error_msg['phoneNumber'][] = "El número de teléfono es obligatorio";
+  } elseif (!preg_match('/^[0-9]{10}$/', $phoneNumber)) { // Ajustar la expresión regular según el formato del teléfono
+    $error_msg['phoneNumber'][] = "El número de teléfono debe ser un número válido de 10 dígitos";
   }
 
   if (empty($password)) {
-    $error_msg['password'][] = "Password is required";
+    $error_msg['password'][] = "La contraseña es obligatoria";
   } elseif (strlen($password) < 6) {
-    $error_msg['password'][] = "Password must be at least 6 characters long";
+    $error_msg['password'][] = "La contraseña debe tener al menos 6 caracteres";
   } elseif ($password !== $confirmPassword) {
-    $error_msg['confirmPassword'][] = "Passwords do not match";
+    $error_msg['confirmPassword'][] = "Las contraseñas no coinciden";
   }
 
   // Check for errors before insertion
@@ -69,7 +61,7 @@ if (isset($_REQUEST['register_btn'])) {
 
       // 3. Check if the email already exists
       if ($row && $row['email'] === $emailAddress) {
-        $error_msg['db'][] = "Email address already exists";
+        $error_msg['email'][] = "El correo electrónico ya existe";
       } else {
         // 4. If no errors, proceed to insert the new user
         // Hash the password before storing
@@ -90,13 +82,15 @@ if (isset($_REQUEST['register_btn'])) {
           ':password' => $hashedPassword
         ]);
 
+        // Set session flag indicating successful registration
+        $_SESSION['registration_success'] = true;
         // Success: Redirect or show a success message
         header("Location: login.php"); // Redirect to a success page
         exit();
       }
     } catch (PDOException $e) {
       // Display error if any issues with SQL query execution
-      echo "Database or server error: " . $e->getMessage();
+      echo "Error de base de datos o servidor: " . $e->getMessage();
     }
   }
 }
@@ -127,6 +121,38 @@ if (isset($_REQUEST['register_btn'])) {
   }
   ?>
   <main class="d-flex justify-content-center align-items-start">
+
+
+    <!-- Modal for errors -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="errorModalLabel">Error en el registro</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <?php
+
+            if (isset($error_msg['confirmPassword'])) {
+              foreach ($error_msg['confirmPassword'] as $msg) {
+                echo "<p class='text-danger'>$msg</p>";
+              }
+            }
+            if (isset($error_msg['email'])) {
+              foreach ($error_msg['email'] as $msg) {
+                echo "<p class='text-danger'>$msg</p>";
+              }
+            }
+            ?>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="row g-0 w-100">
       <div class="col-md-6 col-lg-5 d-none d-md-block">
         <img src="../img/user.jpg" alt="register form" class="img-fluid h-100" style="object-fit: cover; border-radius: 1rem 0 0 1rem" />
@@ -141,13 +167,9 @@ if (isset($_REQUEST['register_btn'])) {
 
           <form action="register.php" method="post">
             <div class="row">
+
               <!-- First Name Field -->
               <div class="col-md-6 mb-4">
-                <?php if (isset($error_msg['firstName'])) {
-                  foreach ($error_msg['firstName'] as $error) {
-                    echo "<p class='small text-danger'>" . $error . "</p>";
-                  }
-                } ?>
                 <div class="form-outline">
                   <input type="text" id="firstName" name="ifirstName" class="form-control form-control-lg" required />
                   <label class="form-label" for="firstName">Nombre(s)</label>
@@ -221,6 +243,13 @@ if (isset($_REQUEST['register_btn'])) {
                 <div class="form-outline">
                   <input type="password" id="password" name="ipassword" class="form-control form-control-lg" required />
                   <label class="form-label" for="password">Contraseña</label>
+                  <button
+                    type="button"
+                    class="btn"
+                    onclick="togglePasswordVisibility('password', 'toggleIcon1')"
+                    style="border: none; background: transparent; outline: none">
+                    <i class="fas fa-eye" id="toggleIcon1"></i>
+                  </button>
                 </div>
               </div>
 
@@ -229,6 +258,13 @@ if (isset($_REQUEST['register_btn'])) {
                 <div class="form-outline">
                   <input type="password" id="confirmPassword" name="iconfirmPassword" class="form-control form-control-lg" required />
                   <label class="form-label" for="confirmPassword">Confirmar contraseña</label>
+                  <button
+                    type="button"
+                    class="btn"
+                    onclick="togglePasswordVisibility('confirmPassword', 'toggleIcon2')"
+                    style="border: none; background: transparent; outline: none">
+                    <i class="fas fa-eye" id="toggleIcon2"></i>
+                  </button>
                 </div>
               </div>
             </div>
@@ -243,6 +279,18 @@ if (isset($_REQUEST['register_btn'])) {
     </div>
   </main>
 
+  <!-- JavaScript to show modal if there is an error -->
+  <script src="../js/utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+  <script>
+    // Show modal if there are error messages
+    <?php if (!empty($error_msg)) { ?>
+      var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
+      myModal.show();
+    <?php } ?>
+  </script>
 </body>
 
 </html>

@@ -14,6 +14,8 @@
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+  <link rel="stylesheet" href="css/style.css">
   <title>INGEMANAGER</title>
 </head>
 
@@ -95,6 +97,7 @@
               class="btn btn-primary mt-5 px-4 py-2"
               data-bs-toggle="modal"
               onclick="window.location.href='pages/login.php';"
+
               id="startButton1">
               Comenzar
             </button>
@@ -106,19 +109,18 @@
             class="d-block w-100 c-img"
             alt="Notebook image representing productivity" />
           <div class="carousel-caption top-0 mt-4">
-            <h1
-              class="mt-5 display-1 fw-bolder text-capitalize"
-              id="carouselCaption2">
-              Second slide label
+            <h1 class="mt-5 display-1 fw-bolder text-capitalize" id="carouselCaption2">
+              Gestiona tu productividad
             </h1>
             <p id="carouselDescription2">
-              Some representative placeholder content for the second slide.
+              Con INGEMANAGER podrás llevar un control eficiente de tus actividades diarias
             </p>
+
             <button
               class="btn btn-primary mt-5 px-4 py-2"
               data-bs-toggle="modal"
               data-bs-target="#loginModal"
-              style="background-color: #ff8000"
+
               onclick="window.location.href='pages/login.php';"
               id="startButton2">
               Comenzar
@@ -131,19 +133,18 @@
             class="d-block w-100 c-img"
             alt="Sand image illustrating relaxation" />
           <div class="carousel-caption top-0 mt-4">
-            <h1
-              class="mt-5 display-1 fw-bolder text-capitalize"
-              id="carouselCaption3">
-              Third slide label
+            <h1 class="mt-5 display-1 fw-bolder text-capitalize" id="carouselCaption3">
+              Organiza tu tiempo
             </h1>
             <p id="carouselDescription3">
-              Some representative placeholder content for the third slide.
+              INGEMANAGER te ayuda a planificar y optimizar tu agenda de manera efectiva
             </p>
+
             <button
               class="btn btn-primary mt-5 px-4 py-2"
               data-bs-toggle="modal"
               data-bs-target="#loginModal"
-              style="background-color: #ff8000"
+
               onclick="window.location.href='pages/login.php';"
               id="startButton3">
               Comenzar

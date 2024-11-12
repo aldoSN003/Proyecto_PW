@@ -1,24 +1,32 @@
 <?php
 require_once 'connection.php';
 session_start();
-/*
+
 if (isset($_SESSION['user'])) {
   header("location:welcome.php");
-}*/
+}
+
+// Check if the user has just registered and show the success modal
+$showModal = false;
+if (isset($_SESSION['registration_success']) && $_SESSION['registration_success'] === true) {
+  $showModal = true;
+  unset($_SESSION['registration_success']);  // Reset the session flag to prevent repeated modals
+}
+
+
 
 if (isset($_REQUEST['login_btn'])) {
-
 
   $email = filter_var($_REQUEST['iemail'], FILTER_SANITIZE_EMAIL);
   $password = strip_tags($_REQUEST['ipassword']);
   // Initialize error messages as an associative array
   $error_msg = [];
   if (empty($email)) {
-    $error_msg['email'] = 'Must enter email';
+    $error_msg['form'] = 'Completa todos los campos';
   }
 
   if (empty($password)) {
-    $error_msg['password'] = 'Must enter password';
+    $error_msg['form'] = 'Completa todos los campos';
   } else {
     try {
       $select_stmt = $db->prepare("SELECT * FROM users WHERE email = :email LIMIT 1");
@@ -32,31 +40,30 @@ if (isset($_REQUEST['login_btn'])) {
           $_SESSION["user"]["name"] = $row["first_name"];
           $_SESSION["user"]["email"] = $row["email"];
           $_SESSION["user"]["id"] = $row["user_id"];
+          $_SESSION["user"]["date"] = $row["created_At"];
+          $_SESSION["user"]["phone"] = $row["phone"];
+          $_SESSION["user"]["birthday"] = $row["birth_date"];
           header("location: welcome.php");
         } else {
-          $error_msg['login'] = 'Wrong email or password'; // Added specific error for wrong credentials
+          $error_msg['login'] = 'Credenciales inválidas'; // Mensaje para credenciales incorrectas
         }
       } else {
-        $error_msg['login'] = 'Wrong email or password';
+        $error_msg['login'] = 'Credenciales inválidas';
       }
     } catch (PDOException $e) {
       echo $e->getMessage();
     }
   }
 }
-
-
 ?>
 
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
+  <title>Iniciar sesión</title>
   <!-- Add Bootstrap CSS link for styling -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
@@ -67,6 +74,33 @@ if (isset($_REQUEST['login_btn'])) {
 </head>
 
 <body>
+  <?php if ($showModal): ?>
+    <!-- Success Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="successModalLabel">¡Registro Exitoso!</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Tu cuenta se ha creado exitosamente. Por favor, inicia sesión.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Show the modal when the page loads
+      window.addEventListener('DOMContentLoaded', function() {
+        var successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+      });
+    </script>
+  <?php endif; ?>
   <main class="d-flex justify-content-center align-items-center vh-100">
     <div class="row g-0 w-100">
       <div class="col-md-6 col-lg-5 d-none d-md-block">
@@ -88,11 +122,7 @@ if (isset($_REQUEST['login_btn'])) {
               Inicia sesión en tu cuenta
             </h5>
 
-
-
-
             <div class="form-outline mb-4">
-
               <input
                 placeholder="jane@doe.com"
                 type="email"
@@ -101,21 +131,12 @@ if (isset($_REQUEST['login_btn'])) {
                 class="form-control form-control-lg form-check" />
 
               <label class="form-label" for="form2Example17">Correo electrónico</label>
-              <?php
-              if (isset($error_msg['email'])) {
-                echo " <label class='form-label small text-danger'>" . $error_msg['email'] . "</label>";
-              }
-              ?>
+
 
             </div>
-            <?php
-            if (isset($error_msg['password'])) {
-              echo "<p class='small text-danger'>" . $error_msg['password'] . "</p>";
-            }
-            ?>
+
             <div class="form-outline mb-4 ">
               <input
-
                 type="password"
                 name="ipassword"
                 id="form2Example27"
@@ -130,8 +151,8 @@ if (isset($_REQUEST['login_btn'])) {
               </button>
             </div>
             <div class="pt-1 mb-4">
-              <button class="btn btn-primary" type="submit" name="login_btn">
-                Login
+              <button class="btn btn-dark btn-lg btn-block" type="submit" name="login_btn">
+                Iniciar sesión
               </button>
             </div>
             <a class="small text-muted" href="#!">¿Olvidaste tu contraseña?</a>
@@ -140,20 +161,54 @@ if (isset($_REQUEST['login_btn'])) {
               <a
                 id="registerLink"
                 href="../pages/register.php"
-                style="color: #393f81">Registrate aquí</a>
+                style="color: #393f81">Regístrate aquí</a>
             </p>
             <a href="#!" class="small text-muted">Términos de uso</a>
-            <a href="#!" class="small text-muted">Política de privacidad</a>
+            <a href="politicas.php" target="_blank" class="small text-muted">Política de privacidad</a>
           </form>
         </div>
       </div>
     </div>
   </main>
 
+  <!-- Modal for errors -->
+  <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm  modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="errorModalLabel">Error de Inicio de Sesión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <?php
+          if (isset($error_msg['login'])) {
+            echo "<p class='text-danger'>" . $error_msg['login'] . "</p>";
+          }
+          if (isset($error_msg['form'])) {
+            echo "<p class='text-danger'>" . $error_msg['form'] . "</p>";
+          }
+
+          ?>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="../js/utils.js"></script>
   <!-- Add Bootstrap JS and Popper.js for modal functionality -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+  <script>
+    // Show modal if there are error messages
+    <?php if (!empty($error_msg)) { ?>
+      var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
+      myModal.show();
+    <?php } ?>
+  </script>
 </body>
 
 </html>
