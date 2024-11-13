@@ -1,12 +1,11 @@
--- Create the database
+-- CREACION DE BASE DE DATOS
 CREATE DATABASE pweb;
 
 DROP DATABASE pweb;
 
--- Use the created database
 USE pweb;
 
--- Create the users table
+-- TABLA users
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50),
@@ -19,6 +18,7 @@ CREATE TABLE users (
     created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ESTRUCTURA QUE SE USO PARA INSERTAR DATOS 
 INSERT INTO
     users (
         first_name,

@@ -2,9 +2,9 @@
 require_once 'connection.php';
 session_start();
 
-// Check if the user is logged in by verifying session data
+// Verificar sesion del usuario
 if (!isset($_SESSION['user'])) {
-    // If the user is not logged in, redirect them to the login page
+    // Si la sesion acabo, redirije a index.php
     header("location: index.php");
     exit();
 }
@@ -39,7 +39,7 @@ if (!isset($_SESSION['user'])) {
                             <a class="nav-link" href="#" id="faqLink">FAQ</a>
                         </li>
                         <li class="nav-item">
-                           
+
                             <a class="nav-link" href="#" id="accountLink" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
                                 <i class="far fa-circle-user"></i>
                                 Mi cuenta
@@ -76,7 +76,7 @@ if (!isset($_SESSION['user'])) {
                             <ul class="list-group list-group-flush rounded-3">
                                 <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                     <i class="fas fa-globe fa-lg text-warning"></i>
-                                    <p class="mb-0">https://mdbootstrap.com</p>
+                                    <p class="mb-0"></p>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                     <i class="fab fa-github fa-lg text-body"></i>

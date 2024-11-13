@@ -37,7 +37,7 @@ if (isset($_REQUEST['register_btn'])) {
 
   if (empty($phoneNumber)) {
     $error_msg['phoneNumber'][] = "El número de teléfono es obligatorio";
-  } elseif (!preg_match('/^[0-9]{10}$/', $phoneNumber)) { // Ajustar la expresión regular según el formato del teléfono
+  } elseif (!preg_match('/^[0-9]{10}$/', $phoneNumber)) {
     $error_msg['phoneNumber'][] = "El número de teléfono debe ser un número válido de 10 dígitos";
   }
 
@@ -123,7 +123,7 @@ if (isset($_REQUEST['register_btn'])) {
   <main class="d-flex justify-content-center align-items-start">
 
 
-    <!-- modelo para errores -->
+    <!-- modal para errores -->
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
@@ -279,11 +279,11 @@ if (isset($_REQUEST['register_btn'])) {
     </div>
   </main>
 
-  <!-- usar javascript para mostrar si hay mensajes de erores -->
+
   <script src="../js/utils.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
-
+  <!-- usar javascript para mostrar si hay mensajes de erores -->
   <script>
     // mostrar el modelo si hay errores
     <?php if (!empty($error_msg)) { ?>

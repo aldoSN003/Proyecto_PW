@@ -57,7 +57,7 @@ if (!isset($_SESSION['user'])) {
         </nav>
     </header>
 
-    <h1>You are successfully logged in!</h1>
+    <h1>Has iniciado sesion correctamente!</h1>
 
 
 
