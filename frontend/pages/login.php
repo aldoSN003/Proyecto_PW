@@ -6,11 +6,11 @@ if (isset($_SESSION['user'])) {
   header("location:welcome.php");
 }
 
-// Check if the user has just registered and show the success modal
+// verificar si el usuario se acaba de registrar y mostrarle el modelo exitoso
 $showModal = false;
 if (isset($_SESSION['registration_success']) && $_SESSION['registration_success'] === true) {
   $showModal = true;
-  unset($_SESSION['registration_success']);  // Reset the session flag to prevent repeated modals
+  unset($_SESSION['registration_success']); 
 }
 
 
@@ -19,7 +19,7 @@ if (isset($_REQUEST['login_btn'])) {
 
   $email = filter_var($_REQUEST['iemail'], FILTER_SANITIZE_EMAIL);
   $password = strip_tags($_REQUEST['ipassword']);
-  // Initialize error messages as an associative array
+  // inicializar mensaje de error en un array asociativo
   $error_msg = [];
   if (empty($email)) {
     $error_msg['form'] = 'Completa todos los campos';
@@ -64,7 +64,7 @@ if (isset($_REQUEST['login_btn'])) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Iniciar sesión</title>
-  <!-- Add Bootstrap CSS link for styling -->
+  <!-- añadir el link de bootsrap y css para estilizado -->
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
     rel="stylesheet" />
@@ -75,7 +75,7 @@ if (isset($_REQUEST['login_btn'])) {
 
 <body>
   <?php if ($showModal): ?>
-    <!-- Success Modal -->
+    <!-- Modelos exitoso -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
@@ -94,7 +94,7 @@ if (isset($_REQUEST['login_btn'])) {
     </div>
 
     <script>
-      // Show the modal when the page loads
+      // Mostrar el modelo cuando la pagina cargue
       window.addEventListener('DOMContentLoaded', function() {
         var successModal = new bootstrap.Modal(document.getElementById('successModal'));
         successModal.show();
@@ -163,7 +163,7 @@ if (isset($_REQUEST['login_btn'])) {
                 href="../pages/register.php"
                 style="color: #393f81">Regístrate aquí</a>
             </p>
-            <a href="#!" class="small text-muted">Términos de uso</a>
+            <a href="terminosUso.php" class="small text-muted">Términos de uso</a>
             <a href="politicas.php" target="_blank" class="small text-muted">Política de privacidad</a>
           </form>
         </div>
@@ -171,7 +171,7 @@ if (isset($_REQUEST['login_btn'])) {
     </div>
   </main>
 
-  <!-- Modal for errors -->
+  <!-- modelo para errores -->
   <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm  modal-dialog-centered">
       <div class="modal-content">
@@ -198,12 +198,12 @@ if (isset($_REQUEST['login_btn'])) {
   </div>
 
   <script src="../js/utils.js"></script>
-  <!-- Add Bootstrap JS and Popper.js for modal functionality -->
+  <!-- añadir bootstrap, js y popper.js para la funcionalidad del modelo -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
   <script>
-    // Show modal if there are error messages
+    // Mostrar si hay mensajes de errores
     <?php if (!empty($error_msg)) { ?>
       var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
       myModal.show();

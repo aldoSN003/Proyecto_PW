@@ -1,9 +1,9 @@
 <?php
 require_once 'connection.php';
-session_start(); // Start session to manage session variables
+session_start(); // iniciar la sesion para manejar las variables de sesion
 $error_msg = [];
 
-# CLICKING "register_btn"
+# presionar el boton de registro
 if (isset($_REQUEST['register_btn'])) {
 
   $firstName = htmlspecialchars(strip_tags(trim($_REQUEST['ifirstName'] ?? '')));
@@ -11,16 +11,16 @@ if (isset($_REQUEST['register_btn'])) {
   $birthdayDate = htmlspecialchars(strip_tags(trim($_REQUEST['ibirthdayDate'] ?? '')));
   $gender = htmlspecialchars(strip_tags(trim($_REQUEST['igender'] ?? '')));
 
-  // Validate and sanitize specific fields
+  // validar campos especificos
   $emailAddress = filter_var(trim($_REQUEST['iemailAddress'] ?? ''), FILTER_SANITIZE_EMAIL);
   $phoneNumber = htmlspecialchars(strip_tags(trim($_REQUEST['iphoneNumber'] ?? '')));
   $password = strip_tags(trim($_REQUEST['ipassword'] ?? ''));
   $confirmPassword = strip_tags(trim($_REQUEST['iconfirmPassword'] ?? ''));
 
-  // Initialize an array to store error messages
+  // inicializar el array para los mensajes de errores
   $error_msg = [];
 
-  // Validate each field for emptiness
+  // validar si los campos estan vacios
   if (empty($firstName)) {
     $error_msg['firstName'][] = "El nombre es obligatorio";
   }
@@ -49,25 +49,25 @@ if (isset($_REQUEST['register_btn'])) {
     $error_msg['confirmPassword'][] = "Las contraseñas no coinciden";
   }
 
-  // Check for errors before insertion
+  // checar si hay errores antes de la insercion
   if (empty($error_msg)) {
     try {
-      // 1. Prepare SQL query to check if the email already exists in the database
+      // 1. preparar el query sql para verificar si ese email existe ya
       $select_stmt = $db->prepare("SELECT email FROM users WHERE email = :email");
       $select_stmt->execute([':email' => $emailAddress]);
 
-      // 2. Fetch result to check if email is found
+      // 2. si el email es encontrado
       $row = $select_stmt->fetch(PDO::FETCH_ASSOC);
 
-      // 3. Check if the email already exists
+      // 3. cehcar si el email existe
       if ($row && $row['email'] === $emailAddress) {
         $error_msg['email'][] = "El correo electrónico ya existe";
       } else {
-        // 4. If no errors, proceed to insert the new user
-        // Hash the password before storing
+        // 4. si no hay errores, proceder a insertar el nuevo usuario
+        // hacer Hash a la contraseña antes de proceder
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        // Prepare SQL query to insert new user
+        // preparar el query sql antes de insertar
         $insert_stmt = $db->prepare(
           "INSERT INTO users (first_name, last_name, birth_date, gender, email, phone, password) 
            VALUES (:first_name, :last_name, :birth_date, :gender, :email, :phone, :password)"
@@ -82,14 +82,14 @@ if (isset($_REQUEST['register_btn'])) {
           ':password' => $hashedPassword
         ]);
 
-        // Set session flag indicating successful registration
+        // colcar la sesion flag para verificar que la insercion fue exitosa
         $_SESSION['registration_success'] = true;
-        // Success: Redirect or show a success message
-        header("Location: login.php"); // Redirect to a success page
+        // Exito: redireccionar o mostrar mensaje de exito
+        header("Location: login.php"); // redireccionar a la pagina de exito
         exit();
       }
     } catch (PDOException $e) {
-      // Display error if any issues with SQL query execution
+      // mostrar un error si ocurre un error  en el query
       echo "Error de base de datos o servidor: " . $e->getMessage();
     }
   }
@@ -123,7 +123,7 @@ if (isset($_REQUEST['register_btn'])) {
   <main class="d-flex justify-content-center align-items-start">
 
 
-    <!-- Modal for errors -->
+    <!-- modelo para errores -->
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
@@ -168,7 +168,7 @@ if (isset($_REQUEST['register_btn'])) {
           <form action="register.php" method="post">
             <div class="row">
 
-              <!-- First Name Field -->
+              <!-- campo para primer nombre -->
               <div class="col-md-6 mb-4">
                 <div class="form-outline">
                   <input type="text" id="firstName" name="ifirstName" class="form-control form-control-lg" required />
@@ -176,7 +176,7 @@ if (isset($_REQUEST['register_btn'])) {
                 </div>
               </div>
 
-              <!-- Last Name Field -->
+              <!-- campo para apellidos -->
               <div class="col-md-6 mb-4">
                 <div class="form-outline">
                   <input type="text" id="lastName" name="ilastName" class="form-control form-control-lg" required />
@@ -186,7 +186,7 @@ if (isset($_REQUEST['register_btn'])) {
             </div>
 
             <div class="row">
-              <!-- Birthdate Field -->
+              <!-- campo para fecha de nacimiento -->
               <div class="col-md-6 mb-4">
                 <div class="form-outline">
                   <input type="date" class="form-control form-control-lg" id="birthdayDate" name="ibirthdayDate" required />
@@ -194,7 +194,7 @@ if (isset($_REQUEST['register_btn'])) {
                 </div>
               </div>
 
-              <!-- Gender Fields -->
+              <!-- campo para genero -->
               <div class="col-md-6 mb-4">
                 <h6 class="mb-2 pb-1">Género:</h6>
                 <div class="form-check form-check-inline">
@@ -213,7 +213,7 @@ if (isset($_REQUEST['register_btn'])) {
             </div>
 
             <div class="row">
-              <!-- Email Field -->
+              <!-- campo para email -->
               <div class="col-md-6 mb-4 pb-2">
                 <?php
                 if (isset($error_msg['emailAddress'])) {
@@ -228,7 +228,7 @@ if (isset($_REQUEST['register_btn'])) {
                 </div>
               </div>
 
-              <!-- Phone Field -->
+              <!-- campo para numero -->
               <div class="col-md-6 mb-4 pb-2">
                 <div class="form-outline">
                   <input type="text" id="phoneNumber" name="iphoneNumber" class="form-control form-control-lg" />
@@ -238,7 +238,7 @@ if (isset($_REQUEST['register_btn'])) {
             </div>
 
             <div class="row">
-              <!-- Password Field -->
+              <!-- campo para contraseña -->
               <div class="col-md-6 mb-4">
                 <div class="form-outline">
                   <input type="password" id="password" name="ipassword" class="form-control form-control-lg" required />
@@ -253,7 +253,7 @@ if (isset($_REQUEST['register_btn'])) {
                 </div>
               </div>
 
-              <!-- Confirm Password Field -->
+              <!-- campo para confirmar contraseña -->
               <div class="col-md-6 mb-4">
                 <div class="form-outline">
                   <input type="password" id="confirmPassword" name="iconfirmPassword" class="form-control form-control-lg" required />
@@ -279,13 +279,13 @@ if (isset($_REQUEST['register_btn'])) {
     </div>
   </main>
 
-  <!-- JavaScript to show modal if there is an error -->
+  <!-- usar javascript para mostrar si hay mensajes de erores -->
   <script src="../js/utils.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
   <script>
-    // Show modal if there are error messages
+    // mostrar el modelo si hay errores
     <?php if (!empty($error_msg)) { ?>
       var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
       myModal.show();

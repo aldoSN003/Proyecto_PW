@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-// Destroy all session data to log out the user
+// eliminar todas las sesiones para cerrar la sesion del usuario
 session_unset();
 session_destroy();
 
-// Redirect to the login page
+// redireccionar a la pagina de logeo
 header("Location: ../index.php");
 exit();

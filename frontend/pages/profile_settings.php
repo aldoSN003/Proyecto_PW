@@ -39,7 +39,7 @@ if (!isset($_SESSION['user'])) {
                             <a class="nav-link" href="#" id="faqLink">FAQ</a>
                         </li>
                         <li class="nav-item">
-                            <!-- Updated the data-bs-target to match the offcanvas element's ID -->
+                           
                             <a class="nav-link" href="#" id="accountLink" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
                                 <i class="far fa-circle-user"></i>
                                 Mi cuenta
@@ -227,12 +227,12 @@ if (!isset($_SESSION['user'])) {
         </div>
         <div class="offcanvas-body" style="background-color: #f8f9fa; color: #333;">
 
-            <!-- Profile Image -->
+            <!-- imagen de perfil -->
             <div class="text-center mb-4">
                 <img src="../img/messi.jpg" alt="User Profile" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
             </div>
 
-            <!-- User Info Section -->
+            <!-- seccion de la informacion del usuario -->
             <div class="mb-4">
                 <h4 class="text-left">Bienvenido, <strong><?php echo $_SESSION['user']['name']; ?></strong>!</h4>
                 <p class="text-left">Tu correo: <strong><?php echo $_SESSION['user']['email']; ?></strong></p>
@@ -241,10 +241,10 @@ if (!isset($_SESSION['user'])) {
                 <p class="text-left text-muted">Rol: <strong>Administrador</strong></p>
             </div>
 
-            <!-- Separator -->
+            <!-- separador -->
             <hr class="my-4">
 
-            <!-- Edit Profile & Change Password Links -->
+            <!-- editar perfiles y cambiar las contraseñas -->
             <div class="mb-4">
                 <a href="profile_settings.php" class="btn btn-outline-dark btn-sm px-4 py-2 mb-3 w-100 text-start">
                     <i class="fas fa-user-edit"></i> Editar perfil
@@ -254,10 +254,10 @@ if (!isset($_SESSION['user'])) {
                 </a>
             </div>
 
-            <!-- Separator -->
+            <!-- separador -->
             <hr class="my-4">
 
-            <!-- Logout Button -->
+            <!-- boton de cerrar sesion -->
             <div class="d-flex justify-content-start mt-5">
                 <a href="logout.php" class="btn btn-danger px-4 py-2" style="text-transform: uppercase;">
                     Cerrar sesión
@@ -267,14 +267,14 @@ if (!isset($_SESSION['user'])) {
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- modelo -->
     <div class="modal top fade" id="pwdModal" tabindex="-1" aria-labelledby="exampleModalLabel"
         aria-hidden="true" data-mdb-backdrop="true" data-mdb-keyboard="true">
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content text-center">
                 <div class="modal-header h5 text-white bg-primary justify-content-center bg-dark">
                     Restablecer la contraseña
-                    <!-- "X" close button -->
+                    <!-- "X" boton de cerrar -->
                     <button type="button" class="btn-close text-reset bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body px-5">
@@ -293,7 +293,7 @@ if (!isset($_SESSION['user'])) {
         </div>
     </div>
 
-    <!-- Add Bootstrap JS and Popper.js for offcanvas functionality -->
+    <!-- añadir bootstrap, js y pooper.js para funcionalidad -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 
