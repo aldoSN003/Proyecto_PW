@@ -200,7 +200,6 @@
             </a>
           </div>
           <div class="col-md-5 col-lg-4 ml-lg-0 text-center text-md-end">
-<<<<<<< HEAD
             <a
               class="btn text-white"
               data-mdb-ripple-init
@@ -218,21 +217,18 @@
               href="https://x.com/TecNM_MX"
               target="_blank"
               role="button"
-=======
-            <a class="btn text-white" data-mdb-ripple-init style="background-color: #3b5998" href="#!" role="button"
-              id="facebookButton">
-              <i class="fab fa-facebook-f"></i>
-            </a>
-            <a class="btn text-white" data-mdb-ripple-init style="background-color: #55acee" href="#!" role="button"
->>>>>>> 88849023ef993d97aff6694cc6fab11286db1ece
               id="twitterButton">
               <i class="fab fa-twitter"></i>
             </a>
-            <a class="btn text-white" data-mdb-ripple-init style="background-color: #dd4b39" href="#!" role="button"
+            <a
+              class="btn text-white"
+              data-mdb-ripple-init
+              style="background-color: #dd4b39"
+              href="#"
+              role="button"
               id="googleButton">
               <i class="fab fa-google"></i>
             </a>
-<<<<<<< HEAD
             <a
               class="btn text-white"
               data-mdb-ripple-init
@@ -240,13 +236,11 @@
               href="https://www.instagram.com/tecnologico_nacional/"
               target="_blank"
               role="button"
-=======
-            <a class="btn text-white" data-mdb-ripple-init style="background-color: #ac2bac" href="#!" role="button"
->>>>>>> 88849023ef993d97aff6694cc6fab11286db1ece
               id="instagramButton">
               <i class="fab fa-instagram"></i>
             </a>
           </div>
+
         </div>
       </section>
     </div>
@@ -254,12 +248,12 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
       const stars = document.querySelectorAll(".rating i");
       let selectedRating = 0;
 
       stars.forEach(star => {
-        star.addEventListener("click", function () {
+        star.addEventListener("click", function() {
           selectedRating = this.getAttribute("data-rating");
           updateStarDisplay(selectedRating);
         });
@@ -277,9 +271,9 @@
         }
       }
 
-      window.submitRating = function () {
+      window.submitRating = function() {
         alert('Gracias por calificar! Tu calificación es: ' + selectedRating + ' estrellas');
-    
+
       }
     });
   </script>
