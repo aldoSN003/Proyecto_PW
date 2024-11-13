@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container my-5">
-        <h1 class="text-center mb-4">Términos de Uso</h1>
+        <h1 class="text-center mb-4">Términos de uso</h1>
         <div class="accordion" id="termsOfUseAccordion">
 
 <div class="card">
