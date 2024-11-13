@@ -1,8 +1,9 @@
+// funcion que permite ver la contraseña
 function togglePasswordVisibility(inputId, iconId) {
   const passwordInput = document.getElementById(inputId);
   const toggleIcon = document.getElementById(iconId);
 
-  if (passwordInput && toggleIcon) {  // Check if both elements exist
+  if (passwordInput && toggleIcon) {  
     if (passwordInput.type === "password") {
       passwordInput.type = "text";
       toggleIcon.classList.remove("fa-eye");
@@ -17,5 +18,5 @@ function togglePasswordVisibility(inputId, iconId) {
   }
 }
 
-// Attach the function to the global window object
+// Permite utilizar funcion de manera global
 window.togglePasswordVisibility = togglePasswordVisibility;

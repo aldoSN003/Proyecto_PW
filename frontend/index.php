@@ -214,6 +214,14 @@
                 class="link-info text-decoration-none"
                 id="contactPhone">+52 734 546 12 35</a>
             </p>
+            <p>
+              <i class="fas fa-circle-info"></i>
+              <a
+                href="pages/about.php"
+                target="_blank"
+                class="link-info text-decoration-none"
+                id="contactPhone">A cerca de nosotros</a>
+            </p>
           </div>
         </div>
       </section>
@@ -232,7 +240,8 @@
               class="btn text-white"
               data-mdb-ripple-init
               style="background-color: #3b5998"
-              href="#!"
+              href="https://www.facebook.com/SomosTecNM/?locale=es_LA"
+              target="_blank"
               role="button"
               id="facebookButton">
               <i class="fab fa-facebook-f"></i>
@@ -241,7 +250,8 @@
               class="btn text-white"
               data-mdb-ripple-init
               style="background-color: #55acee"
-              href="#!"
+              href="https://x.com/TecNM_MX"
+              target="_blank"
               role="button"
               id="twitterButton">
               <i class="fab fa-twitter"></i>
@@ -259,7 +269,8 @@
               class="btn text-white"
               data-mdb-ripple-init
               style="background-color: #ac2bac"
-              href="#!"
+              href="https://www.instagram.com/tecnologico_nacional/"
+              target="_blank"
               role="button"
               id="instagramButton">
               <i class="fab fa-instagram"></i>

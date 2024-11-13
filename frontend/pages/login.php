@@ -10,7 +10,7 @@ if (isset($_SESSION['user'])) {
 $showModal = false;
 if (isset($_SESSION['registration_success']) && $_SESSION['registration_success'] === true) {
   $showModal = true;
-  unset($_SESSION['registration_success']); 
+  unset($_SESSION['registration_success']);
 }
 
 
@@ -64,7 +64,7 @@ if (isset($_REQUEST['login_btn'])) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Iniciar sesión</title>
-  <!-- añadir el link de bootsrap y css para estilizado -->
+
   <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
     rel="stylesheet" />
@@ -75,7 +75,7 @@ if (isset($_REQUEST['login_btn'])) {
 
 <body>
   <?php if ($showModal): ?>
-    <!-- Modelos exitoso -->
+    <!-- MODAL exitoso -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
@@ -94,7 +94,7 @@ if (isset($_REQUEST['login_btn'])) {
     </div>
 
     <script>
-      // Mostrar el modelo cuando la pagina cargue
+      // Mostrar el MODAL cuando la pagina cargue
       window.addEventListener('DOMContentLoaded', function() {
         var successModal = new bootstrap.Modal(document.getElementById('successModal'));
         successModal.show();
@@ -171,7 +171,7 @@ if (isset($_REQUEST['login_btn'])) {
     </div>
   </main>
 
-  <!-- modelo para errores -->
+  <!-- MODAL para errores -->
   <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm  modal-dialog-centered">
       <div class="modal-content">
@@ -198,7 +198,7 @@ if (isset($_REQUEST['login_btn'])) {
   </div>
 
   <script src="../js/utils.js"></script>
-  <!-- añadir bootstrap, js y popper.js para la funcionalidad del modelo -->
+
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 

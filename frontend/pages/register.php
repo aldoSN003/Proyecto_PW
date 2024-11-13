@@ -285,7 +285,7 @@ if (isset($_REQUEST['register_btn'])) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
   <!-- usar javascript para mostrar si hay mensajes de erores -->
   <script>
-    // mostrar el modelo si hay errores
+    // mostrar el MODAL si hay errores
     <?php if (!empty($error_msg)) { ?>
       var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
       myModal.show();
