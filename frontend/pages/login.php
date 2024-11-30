@@ -25,7 +25,7 @@ if (isset($_REQUEST['login_btn'])) {
         $error_msg['form'] = 'Completa todos los campos';
     } else {
         // Validar las credenciales usando `mysqli`
-        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? LIMIT 1");
+        $stmt = $conn->prepare("SELECT * FROM user WHERE email = ? LIMIT 1");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();

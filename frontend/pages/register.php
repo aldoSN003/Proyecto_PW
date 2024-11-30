@@ -49,7 +49,7 @@ if (isset($_REQUEST['register_btn'])) {
     // Checar si hay errores antes de la inserción
     if (empty($error_msg)) {
         // Verificar si el correo electrónico ya existe
-        $stmt = $conn->prepare("SELECT email FROM users WHERE email = ?");
+        $stmt = $conn->prepare("SELECT email FROM user WHERE email = ?");
         $stmt->bind_param("s", $emailAddress);
         $stmt->execute();
         $stmt->store_result();
@@ -61,7 +61,7 @@ if (isset($_REQUEST['register_btn'])) {
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
             $stmt = $conn->prepare(
-                "INSERT INTO users (first_name, last_name, birth_date, gender, email, phone, password) 
+                "INSERT INTO user (first_name, last_name, birth_date, gender, email, phone, password) 
                  VALUES (?, ?, ?, ?, ?, ?, ?)"
             );
             $stmt->bind_param("sssssss", $firstName, $lastName, $birthdayDate, $gender, $emailAddress, $phoneNumber, $hashedPassword);

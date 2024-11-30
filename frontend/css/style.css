@@ -25,3 +25,10 @@
   background-color: #cc6600; /* Darker shade on hover */
   border-color: #cc6600;
 }
+
+
+.card-img-top {
+  height: 200px; /* Set a fixed height */
+  object-fit: cover; /* Maintain aspect ratio and cover the area */
+  width: 100%; /* Ensure the image takes the full width of the card */
+}
