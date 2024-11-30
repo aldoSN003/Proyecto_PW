@@ -3,98 +3,86 @@ require_once 'connection.php';
 session_start(); // iniciar la sesion para manejar las variables de sesion
 $error_msg = [];
 
-# presionar el boton de registro
+# Presionar el botón de registro
 if (isset($_REQUEST['register_btn'])) {
 
-  $firstName = htmlspecialchars(strip_tags(trim($_REQUEST['ifirstName'] ?? '')));
-  $lastName = htmlspecialchars(strip_tags(trim($_REQUEST['ilastName'] ?? '')));
-  $birthdayDate = htmlspecialchars(strip_tags(trim($_REQUEST['ibirthdayDate'] ?? '')));
-  $gender = htmlspecialchars(strip_tags(trim($_REQUEST['igender'] ?? '')));
+    $firstName = htmlspecialchars(strip_tags(trim($_REQUEST['ifirstName'] ?? '')));
+    $lastName = htmlspecialchars(strip_tags(trim($_REQUEST['ilastName'] ?? '')));
+    $birthdayDate = htmlspecialchars(strip_tags(trim($_REQUEST['ibirthdayDate'] ?? '')));
+    $gender = htmlspecialchars(strip_tags(trim($_REQUEST['igender'] ?? '')));
 
-  // validar campos especificos
-  $emailAddress = filter_var(trim($_REQUEST['iemailAddress'] ?? ''), FILTER_SANITIZE_EMAIL);
-  $phoneNumber = htmlspecialchars(strip_tags(trim($_REQUEST['iphoneNumber'] ?? '')));
-  $password = strip_tags(trim($_REQUEST['ipassword'] ?? ''));
-  $confirmPassword = strip_tags(trim($_REQUEST['iconfirmPassword'] ?? ''));
+    // Validar campos específicos
+    $emailAddress = filter_var(trim($_REQUEST['iemailAddress'] ?? ''), FILTER_SANITIZE_EMAIL);
+    $phoneNumber = htmlspecialchars(strip_tags(trim($_REQUEST['iphoneNumber'] ?? '')));
+    $password = strip_tags(trim($_REQUEST['ipassword'] ?? ''));
+    $confirmPassword = strip_tags(trim($_REQUEST['iconfirmPassword'] ?? ''));
 
-  // inicializar el array para los mensajes de errores
-  $error_msg = [];
+    // Inicializar el array para los mensajes de errores
+    $error_msg = [];
 
-  // validar si los campos estan vacios
-  if (empty($firstName)) {
-    $error_msg['firstName'][] = "El nombre es obligatorio";
-  }
-  if (empty($lastName)) {
-    $error_msg['lastName'][] = "El apellido es obligatorio";
-  }
-  if (empty($birthdayDate)) {
-    $error_msg['birthdayDate'][] = "La fecha de nacimiento es obligatoria";
-  }
-  if (empty($gender)) {
-    $error_msg['gender'][] = "El género es obligatorio";
-  }
-
-
-  if (empty($phoneNumber)) {
-    $error_msg['phoneNumber'][] = "El número de teléfono es obligatorio";
-  } elseif (!preg_match('/^[0-9]{10}$/', $phoneNumber)) {
-    $error_msg['phoneNumber'][] = "El número de teléfono debe ser un número válido de 10 dígitos";
-  }
-
-  if (empty($password)) {
-    $error_msg['password'][] = "La contraseña es obligatoria";
-  } elseif (strlen($password) < 6) {
-    $error_msg['password'][] = "La contraseña debe tener al menos 6 caracteres";
-  } elseif ($password !== $confirmPassword) {
-    $error_msg['confirmPassword'][] = "Las contraseñas no coinciden";
-  }
-
-  // checar si hay errores antes de la insercion
-  if (empty($error_msg)) {
-    try {
-      // 1. preparar el query sql para verificar si ese email existe ya
-      $select_stmt = $db->prepare("SELECT email FROM users WHERE email = :email");
-      $select_stmt->execute([':email' => $emailAddress]);
-
-      // 2. si el email es encontrado
-      $row = $select_stmt->fetch(PDO::FETCH_ASSOC);
-
-      // 3. cehcar si el email existe
-      if ($row && $row['email'] === $emailAddress) {
-        $error_msg['email'][] = "El correo electrónico ya existe";
-      } else {
-        // 4. si no hay errores, proceder a insertar el nuevo usuario
-        // hacer Hash a la contraseña antes de proceder
-        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-
-        // preparar el query sql antes de insertar
-        $insert_stmt = $db->prepare(
-          "INSERT INTO users (first_name, last_name, birth_date, gender, email, phone, password) 
-           VALUES (:first_name, :last_name, :birth_date, :gender, :email, :phone, :password)"
-        );
-        $insert_stmt->execute([
-          ':first_name' => $firstName,
-          ':last_name' => $lastName,
-          ':birth_date' => $birthdayDate,
-          ':gender' => $gender,
-          ':email' => $emailAddress,
-          ':phone' => $phoneNumber,
-          ':password' => $hashedPassword
-        ]);
-
-        // colcar la sesion flag para verificar que la insercion fue exitosa
-        $_SESSION['registration_success'] = true;
-        // Exito: redireccionar o mostrar mensaje de exito
-        header("Location: login.php"); // redireccionar a la pagina de exito
-        exit();
-      }
-    } catch (PDOException $e) {
-      // mostrar un error si ocurre un error  en el query
-      echo "Error de base de datos o servidor: " . $e->getMessage();
+    // Validar si los campos están vacíos
+    if (empty($firstName)) {
+        $error_msg['firstName'][] = "El nombre es obligatorio";
     }
-  }
+    if (empty($lastName)) {
+        $error_msg['lastName'][] = "El apellido es obligatorio";
+    }
+    if (empty($birthdayDate)) {
+        $error_msg['birthdayDate'][] = "La fecha de nacimiento es obligatoria";
+    }
+    if (empty($gender)) {
+        $error_msg['gender'][] = "El género es obligatorio";
+    }
+    if (empty($phoneNumber)) {
+        $error_msg['phoneNumber'][] = "El número de teléfono es obligatorio";
+    } elseif (!preg_match('/^[0-9]{10}$/', $phoneNumber)) {
+        $error_msg['phoneNumber'][] = "El número de teléfono debe ser un número válido de 10 dígitos";
+    }
+    if (empty($password)) {
+        $error_msg['password'][] = "La contraseña es obligatoria";
+    } elseif (strlen($password) < 6) {
+        $error_msg['password'][] = "La contraseña debe tener al menos 6 caracteres";
+    } elseif ($password !== $confirmPassword) {
+        $error_msg['confirmPassword'][] = "Las contraseñas no coinciden";
+    }
+
+    // Checar si hay errores antes de la inserción
+    if (empty($error_msg)) {
+        // Verificar si el correo electrónico ya existe
+        $stmt = $conn->prepare("SELECT email FROM users WHERE email = ?");
+        $stmt->bind_param("s", $emailAddress);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
+            $error_msg['email'][] = "El correo electrónico ya existe";
+        } else {
+            // Si no hay errores, proceder a insertar el nuevo usuario
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+            $stmt = $conn->prepare(
+                "INSERT INTO users (first_name, last_name, birth_date, gender, email, phone, password) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)"
+            );
+            $stmt->bind_param("sssssss", $firstName, $lastName, $birthdayDate, $gender, $emailAddress, $phoneNumber, $hashedPassword);
+
+            if ($stmt->execute()) {
+                // Colocar la sesión flag para verificar que la inserción fue exitosa
+                $_SESSION['registration_success'] = true;
+                // Éxito: redireccionar o mostrar mensaje de éxito
+                header("Location: login.php"); // Redireccionar a la página de éxito
+                exit();
+            } else {
+                echo "Error en la inserción: " . $stmt->error;
+            }
+        }
+        $stmt->close();
+    }
 }
+
+$conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">

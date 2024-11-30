@@ -3,59 +3,57 @@ require_once 'connection.php';
 session_start();
 
 if (isset($_SESSION['user'])) {
-  header("location:welcome.php");
+    header("location:welcome.php");
+    exit();
 }
 
-// verificar si el usuario se acaba de registrar y mostrarle el modelo exitoso
+// Verificar si el usuario se acaba de registrar y mostrarle el modal de éxito
 $showModal = false;
 if (isset($_SESSION['registration_success']) && $_SESSION['registration_success'] === true) {
-  $showModal = true;
-  unset($_SESSION['registration_success']);
+    $showModal = true;
+    unset($_SESSION['registration_success']);
 }
-
-
 
 if (isset($_REQUEST['login_btn'])) {
 
-  $email = filter_var($_REQUEST['iemail'], FILTER_SANITIZE_EMAIL);
-  $password = strip_tags($_REQUEST['ipassword']);
-  // inicializar mensaje de error en un array asociativo
-  $error_msg = [];
-  if (empty($email)) {
-    $error_msg['form'] = 'Completa todos los campos';
-  }
+    $email = filter_var($_REQUEST['iemail'], FILTER_SANITIZE_EMAIL);
+    $password = strip_tags($_REQUEST['ipassword']);
 
-  if (empty($password)) {
-    $error_msg['form'] = 'Completa todos los campos';
-  } else {
-    try {
-      $select_stmt = $db->prepare("SELECT * FROM users WHERE email = :email LIMIT 1");
-      $select_stmt->execute([
-        ':email' => $email,
-      ]);
-      $row = $select_stmt->fetch(PDO::FETCH_ASSOC);
+    // Inicializar mensaje de error en un array asociativo
+    $error_msg = [];
+    if (empty($email) || empty($password)) {
+        $error_msg['form'] = 'Completa todos los campos';
+    } else {
+        // Validar las credenciales usando `mysqli`
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? LIMIT 1");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-      if ($select_stmt->rowCount() > 0) {
-        if (password_verify($password, $row["password"])) {
-          $_SESSION["user"]["name"] = $row["first_name"];
-          $_SESSION["user"]["email"] = $row["email"];
-          $_SESSION["user"]["id"] = $row["user_id"];
-          $_SESSION["user"]["date"] = $row["created_At"];
-          $_SESSION["user"]["phone"] = $row["phone"];
-          $_SESSION["user"]["birthday"] = $row["birth_date"];
-          header("location: welcome.php");
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            if (password_verify($password, $row["password"])) {
+                // Establecer variables de sesión
+                $_SESSION["user"]["name"] = $row["first_name"];
+                $_SESSION["user"]["email"] = $row["email"];
+                $_SESSION["user"]["id"] = $row["user_id"];
+                $_SESSION["user"]["date"] = $row["created_at"];
+                $_SESSION["user"]["phone"] = $row["phone"];
+                $_SESSION["user"]["birthday"] = $row["birth_date"];
+
+                header("location: welcome.php");
+                exit();
+            } else {
+                $error_msg['login'] = 'Credenciales inválidas'; // Mensaje para credenciales incorrectas
+            }
         } else {
-          $error_msg['login'] = 'Credenciales inválidas'; // Mensaje para credenciales incorrectas
+            $error_msg['login'] = 'Credenciales inválidas';
         }
-      } else {
-        $error_msg['login'] = 'Credenciales inválidas';
-      }
-    } catch (PDOException $e) {
-      echo $e->getMessage();
+        $stmt->close();
     }
-  }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
