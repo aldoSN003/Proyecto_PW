@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 error_reporting(E_ALL);
@@ -97,3 +96,68 @@ ini_set('display_errors', 1);
             </div>
         </div>
     </div>
+
+    <!-- Modal para Cambiar Contraseña -->
+    <div class="modal fade" id="pwdModal" tabindex="-1" aria-labelledby="pwdModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pwdModalLabel">Cambiar Contraseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updatePasswordForm" action="crud_operations/update_password.php" method="POST">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Contraseña Actual</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="currentPassword" name="current_password" required>
+                                <button type="button" class="btn" onclick="togglePasswordVisibility('currentPassword', 'toggleCurrentIcon')" style="border: none; background: transparent; outline: none">
+                                    <i class="fas fa-eye" id="toggleCurrentIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">Nueva Contraseña</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="newPassword" name="new_password" required>
+                                <button type="button" class="btn" onclick="togglePasswordVisibility('newPassword', 'toggleNewIcon')" style="border: none; background: transparent; outline: none">
+                                    <i class="fas fa-eye" id="toggleNewIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirmar Nueva Contraseña</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
+                                <button type="button" class="btn" onclick="togglePasswordVisibility('confirmPassword', 'toggleConfirmIcon')" style="border: none; background: transparent; outline: none">
+                                    <i class="fas fa-eye" id="toggleConfirmIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Actualizar Contraseña</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal para Mensajes -->
+    <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">Mensaje</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="messageContent">
+                    <!-- El contenido del mensaje se llenará dinámicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/utils.js"></script>

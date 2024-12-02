@@ -148,4 +148,36 @@ $result = $conn->query($sql);
         }
     }
 </script>
+
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Verifica si hay mensajes de error o éxito
+if (isset($_SESSION['error'])) {
+    $message = htmlspecialchars($_SESSION['error']);
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('messageContent').innerText = '$message';
+            var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+        });
+    </script>";
+    unset($_SESSION['error']); // Limpiar el mensaje después de mostrarlo
+}
+
+if (isset($_SESSION['success'])) {
+    $message = htmlspecialchars($_SESSION['success']);
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('messageContent').innerText = '$message';
+            var messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+            messageModal.show();
+        });
+    </script>";
+    unset($_SESSION['success']); // Limpiar el mensaje después de mostrarlo
+}
+?>
+
 <?php include('components/footer.php'); ?>

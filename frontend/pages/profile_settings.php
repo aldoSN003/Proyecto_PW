@@ -10,10 +10,11 @@ ini_set('display_errors', 1);
             <!-- Tarjeta con Avatar -->
             <div class="card mb-4 text-center">
                 <div class="card-body">
-                    <img src="../img/messi.jpg" alt="avatar"
+                    <img id="profileImage" src="../img/messi.jpg" alt="avatar"
                         class="rounded-circle mb-3"
                         style="width: 100px; height: 100px; object-fit: cover;">
                     <h5 class="my-3"><?php echo $_SESSION['user']['name']; ?></h5>
+                    <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#changeProfileImageModal">Cambiar Foto de Perfil</button>
                 </div>
             </div>
 
@@ -28,7 +29,7 @@ ini_set('display_errors', 1);
                     <div class="mb-3">
                         <p class="mb-1"><strong>Correo electrónico</strong></p>
                         <p class="text-muted"><?php echo $_SESSION['user']['email']; ?></p>
-                       
+
                     </div>
                     <div class="mb-3">
                         <p class="mb-1"><strong>Número telefónico</strong></p>
@@ -141,5 +142,55 @@ ini_set('display_errors', 1);
         </div>
     </div>
 </div>
+
+
+<!-- Modal para cambiar la foto de perfil -->
+<div class="modal fade" id="changeProfileImageModal" tabindex="-1" aria-labelledby="changeProfileImageLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeProfileImageLabel">Cambiar Foto de Perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="profileImageForm">
+                    <input type="file" id="imageInput" accept="image/*" class="form-control" required>
+                </form>
+                <img id="previewImage" src="" alt="Preview" class="img-fluid mt-3" style="display: none; width: 100%; height: auto; object-fit: cover;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="saveImageButton">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Script para mostrar la vista previa de la imagen seleccionada
+    document.getElementById('imageInput').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewImage = document.getElementById('previewImage');
+                previewImage.src = e.target.result;
+                previewImage.style.display = 'block';
+                document.getElementById('profileImage').src = e.target.result; // Cambia la imagen de perfil en la tarjeta
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Opcional: Guardar cambios (puedes agregar lógica aquí si decides implementar la funcionalidad de guardar)
+    document.getElementById('saveImageButton').addEventListener('click', function() {
+        // Aquí puedes agregar lógica para guardar la imagen si decides implementarlo
+        alert('Imagen de perfil cambiada localmente.');
+        // Cierra el modal
+        var modal = bootstrap.Modal.getInstance(document.getElementById('changeProfileImageModal'));
+        modal.hide();
+    });
+</script>
+
 
 <?php include('components/footer.php'); ?>
