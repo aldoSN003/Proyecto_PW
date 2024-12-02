@@ -52,32 +52,16 @@ INSERT INTO product (name, description, price, available, image_url) VALUES
 ('HP Omen 15', 'A gaming laptop with a sleek design and powerful hardware.', 1599.99, 4, 'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/8b74d9c7-76e8-4a4b-935c-43abb9b68f44.jpg;maxHeight=2000;maxWidth=2000;format=webp'),
 ('Toshiba Satellite', 'A reliable laptop for everyday tasks and entertainment.', 699.99, 10, 'https://http2.mlstatic.com/D_NQ_NP_2X_767393-MLM69980096713_062023-F.webp');
 
--TABLA cart
-CREATE TABLE cart (
+
+-- TABLA cart
+CREATE TABLE IF NOT EXISTS cart (
     cart_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL DEFAULT 1,
     subtotal DECIMAL(10, 2) NOT NULL,
     date_added DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES user(user_id),
-    FOREIGN KEY (product_id) REFERENCES product(product_id)
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES product(product_id) ON DELETE CASCADE
 );
 
--- SENTENCIA PARA MOSTRAR LOS PRODUCTOS DEL CARRITO
-SELECT
-    c.cart_id,
-    p.image_url,
-    p.name AS product_name,
-    c.quantity,
-    p.price,
-    c.subtotal
-
-FROM
-    cart c
-JOIN
-    product p
-ON
-    c.product_id = p.product_id
-WHERE
-    c.user_id = 1;
