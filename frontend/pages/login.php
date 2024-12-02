@@ -37,7 +37,7 @@ if (isset($_REQUEST['login_btn'])) {
                 $_SESSION["user"]["name"] = $row["first_name"];
                 $_SESSION["user"]["email"] = $row["email"];
                 $_SESSION["user"]["id"] = $row["user_id"];
-                $_SESSION["user"]["date"] = $row["created_at"];
+                $_SESSION["user"]["created_at"] = $row["created_at"];
                 $_SESSION["user"]["phone"] = $row["phone"];
                 $_SESSION["user"]["birthday"] = $row["birth_date"];
 
@@ -113,7 +113,7 @@ if (isset($_REQUEST['login_btn'])) {
           <form action="login.php" method="post">
             <div class="d-flex align-items-center mb-3 pb-1">
               <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219"></i>
-              <span class="h1 fw-bold mb-0">INGEMANAGER</span>
+              <span class="h1 fw-bold mb-0">INGESHOP</span>
             </div>
 
             <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px">

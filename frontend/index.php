@@ -11,32 +11,23 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
   <link rel="stylesheet" href="css/style.css">
-  <title>INGEMANAGER</title>
+  <title>INGESHOP</title>
 </head>
 
 <body>
   <header>
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
       <div class="container">
-        <a class="navbar-brand text-uppercase" href="#" id="navbarBrand">IngeManager</a>
+        <a class="navbar-brand text-uppercase" href="#" id="navbarBrand">INGESHOP</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="#" id="mainPanelLink">Panel principal</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#" id="faqLink">FAQ</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#" id="accountLink">
-                <i class="far fa-circle-user"></i>
-                Mi cuenta
-              </a>
-            </li>
+
+
+
             <!-- Botón para calificar -->
             <li class="nav-item">
               <button type="button" class="btn btn-primary nav-link" style="color: white;" data-bs-toggle="modal"
@@ -64,10 +55,10 @@
           <img src="img/car.jpg" class="d-block w-100 c-img" alt="Car image showcasing task management" />
           <div class="carousel-caption top-0 mt-4">
             <h1 class="mt-5 display-1 fw-bolder text-capitalize" id="carouselCaption1">
-              Administra tus tareas
+              Compra Inteligente
             </h1>
             <p id="carouselDescription1">
-              Con INGEMANAGER serás capaz de organizar tus tareas inteligentemente
+              Con INGESHOP, podrás gestionar tus compras de manera eficiente y mantenerte organizado.
             </p>
             <button class="btn btn-primary mt-5 px-4 py-2" data-bs-toggle="modal"
               onclick="window.location.href='pages/login.php';" id="startButton1">
@@ -79,10 +70,10 @@
           <img src="img/notebookl.jpg" class="d-block w-100 c-img" alt="Notebook image representing productivity" />
           <div class="carousel-caption top-0 mt-4">
             <h1 class="mt-5 display-1 fw-bolder text-capitalize" id="carouselCaption2">
-              Gestiona tu productividad
+              Maximiza tus Ahorros
             </h1>
             <p id="carouselDescription2">
-              Con INGEMANAGER podrás llevar un control eficiente de tus actividades diarias
+              Controla tus compras y gestiona tu presupuesto de manera efectiva con INGESHOP.
             </p>
 
             <button class="btn btn-primary mt-5 px-4 py-2" data-bs-toggle="modal" data-bs-target="#loginModal"
@@ -95,10 +86,10 @@
           <img src="img/sand.jpg" class="d-block w-100 c-img" alt="Sand image illustrating relaxation" />
           <div class="carousel-caption top-0 mt-4">
             <h1 class="mt-5 display-1 fw-bolder text-capitalize" id="carouselCaption3">
-              Organiza tu tiempo
+              Organiza tus Compras
             </h1>
             <p id="carouselDescription3">
-              INGEMANAGER te ayuda a planificar y optimizar tu agenda de manera efectiva
+              INGESHOP te ayuda a planificar y optimizar tu lista de compras de manera efectiva.
             </p>
 
             <button class="btn btn-primary mt-5 px-4 py-2" data-bs-toggle="modal" data-bs-target="#loginModal"
@@ -152,11 +143,9 @@
       <section>
         <div class="row">
           <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
-            <h6 class="text-uppercase mb-4 font-weight-bold">INGEMANAGER</h6>
+            <h6 class="text-uppercase mb-4 font-weight-bold">INGESHOP</h6>
             <p id="footerDescription">
-              Descubre la plataforma definitiva para ingenieros y equipos de
-              proyecto. IngeManager optimiza tu flujo de trabajo, simplifica
-              la gestión de tareas y te ayuda a lograr más, en equipo.
+              Descubre la plataforma definitiva para gestionar tu experiencia de compra. INGESHOP optimiza tu flujo de trabajo, simplifica la gestión y te ayuda a lograr más mientras compras.
             </p>
           </div>
           <hr class="w-100 clearfix d-md-none" />
@@ -195,7 +184,7 @@
           <div class="col-md-7 col-lg-8 text-center text-md-start">
             <a href="" target="_blank" class="text-decoration-none">
               <div class="p-3 link-info" id="footerCopyright">
-                © 2024 IngeManager. Todos los derechos reservados.
+                © 2024 INGESHOP. Todos los derechos reservados.
               </div>
             </a>
           </div>

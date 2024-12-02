@@ -8,95 +8,147 @@ if (!isset($_SESSION['user'])) {
     header("location: index.php");
     exit();
 }
+
 // Fetch products from the database
 $sql = "SELECT * FROM product";
 $result = $conn->query($sql);
-
-
-
 ?>
 
-
-
 <?php include('components/header.php'); ?>
-
 
 <h1 class="text-center mt-4">Has iniciado sesión correctamente!</h1>
 
 <section style="background-color: #eee;">
     <div class="container py-5">
         <div class="row">
-            <?php
-            if ($result->num_rows > 0) {
-                // Output data of each row
-                while ($row = $result->fetch_assoc()) {
-                    echo '<div class="col-md-6 col-lg-4 mb-4 mb-md-0">';
-                    echo '<div class="card mb-3">';
-                    echo '<img src="' . $row['image_url'] . '" class="card-img-top" alt="' . $row['name'] . '" />';
-                    echo '<div class="card-body">';
-                    echo '<div class="d-flex justify-content-between mb-3">';
-                    echo '<h5 class="mb-0">' . $row['name'] . '</h5>';
-                    echo '<h5 class="text-dark mb-0">$' . number_format($row['price'], 2) . '</h5>';
-                    echo '</div>';
-                    echo '<div class="d-flex justify-content-between mb-2">';
-                    echo '<p class="text-muted mb-0">Available: <span class="fw-bold">' . $row['available'] . '</span></p>';
-                    echo '</div>';
-                    echo '<div class="description mb-3" style="display: none;">'; // Set initial display to block
-                    echo '<p>' . $row['description'] . '</p>';
-                    echo '</div>';
-                    echo '<button class="btn btn-link" onclick="toggleDescription(this)">Show Description</button>';
-                    echo '<div class="d-flex justify-content-between mt-3">';
-                    echo '<button class="btn btn-primary">Buy Now</button>';
-                    echo '<button class="btn btn-secondary">Add to Cart</button>';
-                    echo '</div>';
-                    echo '</div>'; // card-body
-                    echo '</div>'; // card
-                    echo '</div>'; // col
-                }
-            } else {
-                echo '<p>No products found.</p>';
-            }
-            $conn->close(); // Close the database connection
-            ?>
-        </div>
-    </div>
+            <?php if ($result->num_rows > 0): ?>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                    <div class="col-md-6 col-lg-4 mb-4 mb-md-0">
+                        <div class="card mb-3">
+                            <img src="<?php echo htmlspecialchars($row['image_url']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($row['name']); ?>" />
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5 class="mb-0"><?php echo htmlspecialchars($row['name']); ?></h5>
+                                    <h5 class="text-dark mb-0">$<?php echo number_format($row['price'], 2); ?></h5>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <p class="text-muted mb-0">Available: <span class="fw-bold"><?php echo htmlspecialchars($row['available']); ?></span></p>
+                                </div>
+                                <div class="description mb-3" style="display: none;">
+                                    <p><?php echo htmlspecialchars($row['description']); ?></p>
+                                </div>
+                                <button class="btn btn-link" onclick="toggleDescription(this)">Show Description</button>
+                                <div class="d-flex justify-content-between mt-3">
+                                    <button class="btn btn-primary" onclick="setProductDetails('<?php echo htmlspecialchars($row['name']); ?>', <?php echo $row['price']; ?>, <?php echo $row['product_id']; ?>)">Buy Now</button>
+                                    <a href="crud_operations/add_to_cart.php?product_id=<?php echo $row['product_id']; ?>" class="btn btn-secondary">Add to cart</a>
+                                </div>
+                            </div> <!-- card-body -->
+                        </div> <!-- card -->
+                    </div> <!-- col -->
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p>No products found.</p>
+            <?php endif; ?>
+        </div> <!-- row -->
+    </div> <!-- container -->
 </section>
-
-
-
-<!-- Modal -->
-<div class="modal fade" id="pwdModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content text-center">
-            <div class="modal-header h5 text-white bg-primary justify-content-center bg-dark">
-                Restablecer la contraseña
-                <button type="button" class="btn-close text-reset bg-light" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Checkout Modal -->
+<div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="checkoutModalLabel">Detalles de Pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body px-5">
-                <p class="py-2">
-                    Ingresa tu dirección de correo electrónico y te enviaremos un correo con las instrucciones para restablecer tu contraseña.
-                </p>
-                <div class="form-outline">
-                    <input type="email" id="typeEmail" class="form-control my-3" required />
-                    <label class="form-label" for="typeEmail">Correo electrónico</label>
+            <div class="modal-body">
+                <h6>Resumen de tu pedido</h6>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Precio Unitario</th>
+                            <th scope="col">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderDetailsBody">
+                        <!-- Aquí se llenarán los detalles del pedido -->
+                    </tbody>
+                </table>
+                <div class="mb-3 d-flex justify-content-between">
+                    <span class="fw-semibold">Subtotal</span>
+                    <span class="fw-semibold" id="subtotalAmount">$0.00</span>
                 </div>
-                <button class="btn btn-dark w-100">Restablecer contraseña</button>
+                <div class="mb-3 d-flex justify-content-between">
+                    <span class="fw-semibold">Envío</span>
+                    <span class="fw-semibold">$2.99</span>
+                </div>
+                <hr>
+                <div class="mb-4 d-flex justify-content-between">
+                    <span class="fw-bold">Total (impuestos incluidos)</span>
+                    <span class="fw-bold" id="totalAmount">$0.00</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <form action="crud_operations/buy_now.php" method="POST">
+                    <input type="hidden" name="product_id" id="productIdInput"> <!-- Campo oculto para el ID del producto -->
+                    <input type="hidden" name="total" id="totalInput"> <!-- Campo oculto para el total -->
+                    <button type="submit" class="btn btn-primary">Confirmar Pago</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function setProductDetails(productName, productPrice, productId) {
+        const orderDetailsBody = document.getElementById('orderDetailsBody');
+        const subtotalAmount = document.getElementById('subtotalAmount');
+        const totalAmount = document.getElementById('totalAmount');
+        const totalInput = document.getElementById('totalInput');
+        const productIdInput = document.getElementById('productIdInput'); // Obtener el campo oculto para el ID del producto
 
+        // Limpiar la tabla antes de agregar nuevos detalles
+        orderDetailsBody.innerHTML = '';
+
+        // Agregar el producto a la tabla
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${productName}</td>
+        <td>1</td> 
+        <td>$${productPrice.toFixed(2)}</td>
+        <td>$${productPrice.toFixed(2)}</td>
+    `;
+        orderDetailsBody.appendChild(row);
+
+        // Calcular subtotal y total
+        const subtotal = parseFloat(productPrice);
+        const shipping = 2.99;
+        const total = subtotal + shipping;
+
+        subtotalAmount.innerText = `$${subtotal.toFixed(2)}`;
+        totalAmount.innerText = `$${total.toFixed(2)}`;
+        totalInput.value = total.toFixed(2); // Establecer el valor del total en el campo oculto
+        productIdInput.value = productId; // Establecer el ID del producto en el campo oculto
+
+        // Mostrar el modal
+        var checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+        checkoutModal.show();
+    }
+</script>
 <script>
     function toggleDescription(button) {
-        const description = button.previousElementSibling; // Get the description element
-        if (description.style.display === "none") {
-            description.style.display = "block"; // Show the description
-            button.innerText = "Hide Description"; // Change button text
+        // Obtener el elemento de descripción más cercano
+        const description = button.previousElementSibling; // Asumiendo que la descripción está justo antes del botón
+
+        // Alternar la visibilidad de la descripción
+        if (description.style.display === "none" || description.style.display === "") {
+            description.style.display = "block"; // Mostrar la descripción
+            button.innerText = "Hide Description"; // Cambiar el texto del botón
         } else {
-            description.style.display = "none"; // Hide the description
-            button.innerText = "Show Description"; // Change button text
+            description.style.display = "none"; // Ocultar la descripción
+            button.innerText = "Show Description"; // Cambiar el texto del botón
         }
     }
 </script>
-
 <?php include('components/footer.php'); ?>

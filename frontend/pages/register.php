@@ -3,6 +3,10 @@ require_once 'connection.php';
 session_start(); // iniciar la sesion para manejar las variables de sesion
 $error_msg = [];
 
+if (isset($_SESSION['user'])) {
+  header("location:welcome.php");
+  exit();
+}
 # Presionar el botón de registro
 if (isset($_REQUEST['register_btn'])) {
 
@@ -149,7 +153,7 @@ $conn->close();
         <div class="card-body p-4 p-lg-5 text-black w-100">
           <div class="d-flex align-items-center mb-3 pb-1">
             <i class="fas fa-cubes fa-2x me-3" style="color: #ff6219"></i>
-            <span class="h1 fw-bold mb-0">INGEMANAGER</span>
+            <span class="h1 fw-bold mb-0">INGESHOP</span>
           </div>
           <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px">Formulario de registro</h5>
 
