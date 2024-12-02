@@ -1,14 +1,14 @@
 # Proyecto de Conexión y Registro con Base de Datos
 
 
-Este proyecto permite al usuario registrarse, iniciar sesión y acceder a una página de bienvenida (`welcome.php`) donde se muestran los datos del usuario una vez que la sesión ha comenzado. El sistema requiere que se configure manualmente la conexión a la base de datos antes de poder usarlo.
+Este proyecto permite al usuario registrarse, iniciar sesión y acceder a una página de bienvenida (`welcome.php`) donde se muestran los datos del usuario y la lista de productos una vez que la sesión ha comenzado. El sistema requiere que se configure manualmente la conexión a la base de datos antes de poder usarlo.
 
 ## Archivos Importantes
 
 1. **connection.php**  
    Este archivo contiene la lógica de conexión a la base de datos. **Debe ser configurado manualmente** antes de usar el sistema. Es necesario que modifique las credenciales (usuario, contraseña, nombre de la base de datos) de acuerdo con la configuración local de la base de datos.
 
-2. **script.sql**  
+2. **db/script.sql**  
    Este archivo contiene las sentencias SQL necesarias para crear la base de datos y las tablas de usuarios, tal como lo hicimos en la implementación original del proyecto. Puede ejecutar este archivo directamente en su servidor de base de datos para crear la estructura necesaria.
 
 3. **welcome.php**  
