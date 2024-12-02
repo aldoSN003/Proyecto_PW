@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 error_reporting(E_ALL);
@@ -77,7 +78,7 @@ ini_set('display_errors', 1);
                 <p class="text-left">Tel: <strong><?php echo htmlspecialchars($_SESSION['user']['phone']); ?></strong></p>
                 <p class="text-left">Miembro desde: <strong><?php echo $_SESSION['user']['created_at']; ?></strong></p>
                 <p class="text-left text-muted">Cumpleaños: <strong><?php echo htmlspecialchars($_SESSION['user']['birthday']); ?></strong></p>
-                <p class="text-left text-muted">Rol: <strong>Administrador</strong></p>
+
             </div>
             <hr class="my-4">
             <div class="mb-4">

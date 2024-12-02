@@ -1,5 +1,7 @@
 <?php
 require_once 'connection.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 
 if (isset($_SESSION['user'])) {
@@ -35,6 +37,7 @@ if (isset($_REQUEST['login_btn'])) {
             if (password_verify($password, $row["password"])) {
                 // Establecer variables de sesión
                 $_SESSION["user"]["name"] = $row["first_name"];
+                $_SESSION["user"]["last_name"] = $row["last_name"];
                 $_SESSION["user"]["email"] = $row["email"];
                 $_SESSION["user"]["id"] = $row["user_id"];
                 $_SESSION["user"]["created_at"] = $row["created_At"];

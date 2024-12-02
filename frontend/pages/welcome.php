@@ -1,13 +1,10 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 include("connection.php");
-session_start();
 
-// Check if the user is logged in by verifying session data
-if (!isset($_SESSION['user'])) {
-    // Redirect to the login page if the user is not logged in
-    header("location: index.php");
-    exit();
-}
+
+
 
 // Fetch products from the database
 $sql = "SELECT * FROM product";
