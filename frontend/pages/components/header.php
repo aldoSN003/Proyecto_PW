@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 error_reporting(E_ALL);
@@ -76,7 +75,7 @@ ini_set('display_errors', 1);
                 <h4 class="text-left">Bienvenido, <strong><?php echo htmlspecialchars($_SESSION['user']['name']); ?></strong>!</h4>
                 <p class="text-left">Tu correo: <strong><?php echo htmlspecialchars($_SESSION['user']['email']); ?></strong></p>
                 <p class="text-left">Tel: <strong><?php echo htmlspecialchars($_SESSION['user']['phone']); ?></strong></p>
-                <p class="text-left text-muted">Miembro desde: <strong><?php echo htmlspecialchars($_SESSION['user']['created_at']); ?></strong></p> <!-- Fixed line -->
+                <p class="text-left">Miembro desde: <strong><?php echo $_SESSION['user']['created_at']; ?></strong></p>
                 <p class="text-left text-muted">Cumpleaños: <strong><?php echo htmlspecialchars($_SESSION['user']['birthday']); ?></strong></p>
                 <p class="text-left text-muted">Rol: <strong>Administrador</strong></p>
             </div>

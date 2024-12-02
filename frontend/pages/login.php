@@ -37,7 +37,7 @@ if (isset($_REQUEST['login_btn'])) {
                 $_SESSION["user"]["name"] = $row["first_name"];
                 $_SESSION["user"]["email"] = $row["email"];
                 $_SESSION["user"]["id"] = $row["user_id"];
-                $_SESSION["user"]["created_at"] = $row["created_at"];
+                $_SESSION["user"]["created_at"] = $row["created_At"];
                 $_SESSION["user"]["phone"] = $row["phone"];
                 $_SESSION["user"]["birthday"] = $row["birth_date"];
 
